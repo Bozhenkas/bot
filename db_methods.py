@@ -68,7 +68,7 @@ async def update_user_summ(tg_id, category, summ) -> ():
         try:
             await cursor.execute(update_query, (summ, summ, tg_id))
             await conn.commit()
-            return get_user_data(tg_id)  # возвращаем все данные пользователя
+            return await get_user_data(tg_id)  # возвращаем все данные пользователя
         except aiosqlite.IntegrityError as e:
             print(f"Ошибка при обновлении данных: {e}")
 
@@ -150,7 +150,7 @@ async def get_transaction_by_id(transaction_id: int) -> str:
     await cursor.execute("SELECT * FROM transactions WHERE id=?", (transaction_id,))
     transaction_list = list(await cursor.fetchone())
     transaction_list[4] = format_datetime(transaction_list[4])
-    transaction = (f'*{transaction_list[3]} ₽* \\| {reverse_refactor_category(transaction_list[2])} \\| '
+    transaction = (f'*\\{transaction_list[3]} ₽* \\| {reverse_refactor_category(transaction_list[2])} \\| '
                    f'{transaction_list[4]}')
     return transaction
 

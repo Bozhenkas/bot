@@ -24,7 +24,7 @@ async def msg_transactions(message: types.Message):
     transactions_summ = await get_user_data(message.from_user.id)
     keyboard = await get_transactions_kb(message.from_user.id)
     # Тут мы подгрузили всю инлайн клавиатуру из файлика
-    await message.answer(f'{transactions_text_1} ||*{transactions_summ[-1]}*|| \n \n'
+    await message.answer(f'{transactions_text_1} ||*\\{transactions_summ[-1]}*|| \n \n'
                          f'{transactions_text_2}', reply_markup=keyboard, disable_notification=True)
 
 
@@ -78,6 +78,6 @@ async def msg_transactions(callback: types.CallbackQuery):
     transactions_summ = await get_user_data(callback.from_user.id)
     keyboard = await get_transactions_kb(callback.from_user.id)
     # Тут мы подгрузили всю инлайн клавиатуру из файлика
-    await callback.message.edit_text(f'{transactions_text_1} ||*{transactions_summ[-1]}*|| \n \n'
+    await callback.message.edit_text(f'{transactions_text_1} ||*\\{transactions_summ[-1]}*|| \n \n'
                                      f'{transactions_text_2}', reply_markup=keyboard, disable_notification=True)
     await callback.answer()
