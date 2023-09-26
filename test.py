@@ -1,12 +1,10 @@
 import aiosqlite
 
-from db_methods import get_transactions, reverse_refactor_category, transactions_to_list
+from db_methods import get_transactions, reverse_refactor_category, transactions_to_list, get_transaction_by_id
 
 
 async def main():
-    tg_id = 294057781  # Замените на нужный tg_id
-    transactions = transactions_to_list(get_transactions(tg_id))
-    print(*transactions, sep='\n')
+    print(await get_transaction_by_id(373))
 
 
 if __name__ == "__main__":

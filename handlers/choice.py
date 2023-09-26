@@ -3,7 +3,7 @@ from aiogram.fsm.context import FSMContext
 
 from keyboards.for_back import get_back_kb
 from keyboards.for_categories import get_categories_kb
-from handlers.txt import start_text, categories_text, transactions_text, information_text
+from handlers.txt import start_text, categories_text, information_text
 
 from db_methods import get_user_data, get_transactions
 
@@ -13,13 +13,6 @@ router = Router()
 @router.message(F.text == '💵 Добавить сумму')
 async def msg_add_summ(message: types.Message, state: FSMContext):
     await message.answer(categories_text, reply_markup=get_categories_kb())
-
-
-@router.message(F.text == '🧾 Транзакции')
-async def msg_transactions(message: types.Message):
-    # вот тут должен быть код для
-    summ = await get_user_data(message.from_user.id)
-    await message.answer(f'{transactions_text} {summ[-1]}', reply_markup=get_back_kb())
 
 
 @router.message(F.text == 'ℹ️ Информация')

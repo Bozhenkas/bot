@@ -5,7 +5,8 @@ from aiogram.fsm.state import StatesGroup, State
 from keyboards.for_choice import get_choice_kb
 from handlers.txt import summ_text, complete_transaction_text, error_number_text
 
-from db_methods import add_transactions_to_bd, is_number
+from db_methods import add_transactions_to_bd
+from methods import is_number
 
 router = Router()
 available_categories = ['🍟 Mак', '🐔 KFC', '🍔 БК', '🍕🥦🥞 Другое']

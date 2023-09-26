@@ -2,6 +2,8 @@ import aiosqlite
 import datetime
 import pytz
 
+from methods import format_datetime
+
 
 # проверка есть ли в базе - есть (совмещено со вторым)
 # добавление в базу нового челепиздрика - есть
@@ -98,16 +100,15 @@ async def get_transactions(tg_id) -> list:
 
         # Выполняем SQL-запрос для выборки всех транзакций для данного tg_id
         await cursor.execute('SELECT * FROM transactions WHERE [tg id] = ?', (tg_id,))
-
+        rows = await cursor.fetchall()
         # Получаем все строки результата
-        transactions = list(await cursor.fetchall())
+        transactions = [list(row) for row in rows]
 
         # Возвращаем список транзакций
         return transactions
 
 
 def refactor_category(category):
-    print(category)
     if category == '🍟 Mак':
         return 'vit'
     elif category == '🐔 KFC':
@@ -121,7 +122,6 @@ def refactor_category(category):
 
 
 def reverse_refactor_category(category):
-    print(category)
     if category == 'vit':
         return '🍟 Mак'
     elif category == 'kfc':
@@ -134,19 +134,50 @@ def reverse_refactor_category(category):
         raise ValueError("Недопустимая категория")
 
 
-def transactions_to_list(transactions):
-    new_transaction = ''
+async def transactions_to_list(transactions) -> list:
+    new_transactions = []
     for transaction in transactions:
-        new_transaction += transaction[:2]
-        new_transaction += reverse_refactor_category(transaction[2])
-        new_transaction += transaction[2:]
-        new_transaction += '\n'
-    return new_transaction
+        new_transactions.append(
+            [transaction[0], reverse_refactor_category(transaction[2]), transaction[3],
+             format_datetime(transaction[4])])
+    new_transactions.reverse()
+    return new_transactions
 
 
-def is_number(value):
-    try:
-        float(value)  # Попробуйте преобразовать в число
-        return True
-    except ValueError:
-        return False
+async def get_transaction_by_id(transaction_id: int) -> str:
+    conn = await aiosqlite.connect('db.db')
+    cursor = await conn.cursor()
+    await cursor.execute("SELECT * FROM transactions WHERE id=?", (transaction_id,))
+    transaction_list = list(await cursor.fetchone())
+    transaction_list[4] = format_datetime(transaction_list[4])
+    transaction = (f'*{transaction_list[3]} ₽* \\| {reverse_refactor_category(transaction_list[2])} \\| '
+                   f'{transaction_list[4]}')
+    return transaction
+
+
+async def delete_transaction_by_id(transaction_id: int) -> bool:
+    async with aiosqlite.connect('db.db') as db:
+        # Создание курсора
+        async with db.cursor() as cursor:
+            # Шаг 1: Находим транзакцию по id
+            await cursor.execute("SELECT [tg id], category, summ FROM transactions WHERE id = ?", (transaction_id,))
+            transaction_data = await cursor.fetchone()
+
+            if transaction_data:
+                tg_id, category, summ = transaction_data
+
+                # Шаг 2: Вычитаем сумму из категории пользователя
+                await cursor.execute(f"UPDATE users SET {category} = {category} - ? WHERE tg_id = ?", (summ, tg_id,))
+
+                # Шаг 3: Вычитаем сумму из общей суммы пользователя
+                await cursor.execute("UPDATE users SET summ = summ - ? WHERE tg_id = ?", (summ, tg_id,))
+
+                # Шаг 4: Удаляем транзакцию из таблицы transactions
+                await cursor.execute("DELETE FROM transactions WHERE id = ?", (transaction_id,))
+
+                # Сохраняем изменения в базе данных
+                await db.commit()
+                return True
+            else:
+                print(f"Транзакция с id {transaction_id} не найдена")
+                return False

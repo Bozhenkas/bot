@@ -1,7 +1,7 @@
 import asyncio
 from aiogram import Bot, Dispatcher
 
-from handlers import start, choice, back, categories
+from handlers import start, choice, back, categories, transactions
 from config import TOKEN
 
 
@@ -10,7 +10,7 @@ async def main():
     bot = Bot(token=TOKEN, parse_mode="MarkdownV2")
     dp = Dispatcher()
 
-    dp.include_routers(start.router, choice.router, back.router, categories.router)
+    dp.include_routers(start.router, choice.router, back.router, categories.router, transactions.router)
     # Запускаем бота и пропускаем все накопленные входящие
     # Да, этот метод можно вызвать даже если у вас поллинг
     await bot.delete_webhook(drop_pending_updates=True)

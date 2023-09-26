@@ -7,5 +7,5 @@ router = Router()
 
 
 @router.message(F.text == '⬅️ Назад')
-async def msg_add_summ(message: types.Message):
+async def msg_go_back(message: types.Message):
     await message.answer(menu_text, reply_markup=get_choice_kb())
