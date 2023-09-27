@@ -1,6 +1,5 @@
 from aiogram import Router, F, types
 from aiogram.filters.command import Command
-from aiogram.types import Message
 
 from db_methods import add_to_db
 from handlers.txt import start_text

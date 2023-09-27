@@ -2,13 +2,7 @@ import aiosqlite
 import datetime
 import pytz
 
-from methods import format_datetime
-
-
-# проверка есть ли в базе - есть (совмещено со вторым)
-# добавление в базу нового челепиздрика - есть
-# добавление транзакции
-# получение данных о транзакциях человека по его айди
+from methods import format_datetime, refactor_category, reverse_refactor_category
 
 
 async def add_to_db(tg_id, tg_nick=None) -> bool:
@@ -108,42 +102,6 @@ async def get_transactions(tg_id) -> list:
         return transactions
 
 
-def refactor_category(category):
-    if category == '🍟 Mак':
-        return 'vit'
-    elif category == '🐔 KFC':
-        return 'kfc'
-    elif category == '🍔 БК':
-        return 'bk'
-    elif category == '🍕🥦🥞 Другое':
-        return 'other'
-    else:
-        raise ValueError("Недопустимая категория")
-
-
-def reverse_refactor_category(category):
-    if category == 'vit':
-        return '🍟 Mак'
-    elif category == 'kfc':
-        return '🐔 KFC'
-    elif category == 'bk':
-        return '🍔 БК'
-    elif category == 'other':
-        return '🍕🥦🥞 Другое'
-    else:
-        raise ValueError("Недопустимая категория")
-
-
-async def transactions_to_list(transactions) -> list:
-    new_transactions = []
-    for transaction in transactions:
-        new_transactions.append(
-            [transaction[0], reverse_refactor_category(transaction[2]), transaction[3],
-             format_datetime(transaction[4])])
-    new_transactions.reverse()
-    return new_transactions
-
-
 async def get_transaction_by_id(transaction_id: int) -> str:
     conn = await aiosqlite.connect('db.db')
     cursor = await conn.cursor()
@@ -181,3 +139,23 @@ async def delete_transaction_by_id(transaction_id: int) -> bool:
             else:
                 print(f"Транзакция с id {transaction_id} не найдена")
                 return False
+
+
+async def get_total_summ():
+    # Подключение к базе данных
+    async with aiosqlite.connect('db.db') as db:
+        # Создание курсора
+        cursor = await db.cursor()
+
+        # Выполнение SQL-запроса для вычисления суммы всех пользователей
+        await cursor.execute('SELECT SUM(summ) FROM users')
+
+        # Получение результата
+        total_summ = await cursor.fetchone()
+
+        if total_summ:
+            # Если есть результат, вернуть сумму
+            return str(total_summ[0])
+        else:
+            # В случае отсутствия данных, вернуть 0
+            return '0'

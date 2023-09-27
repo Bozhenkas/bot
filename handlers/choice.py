@@ -3,9 +3,7 @@ from aiogram.fsm.context import FSMContext
 
 from keyboards.for_back import get_back_kb
 from keyboards.for_categories import get_categories_kb
-from handlers.txt import start_text, categories_text, information_text
-
-from db_methods import get_user_data, get_transactions
+from handlers.txt import categories_text, information_text
 
 router = Router()
 

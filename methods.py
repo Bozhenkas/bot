@@ -13,9 +13,9 @@ def format_datetime(input_datetime_str) -> str:
         7: 'июля',
         8: 'августа',
         9: 'sep',
-        10: 'oct.',
-        11: 'nov.',
-        12: 'dec.'
+        10: 'oct',
+        11: 'nov',
+        12: 'dec'
     }
 
     # Преобразуем строку с датой и временем в объект datetime
@@ -34,9 +34,45 @@ def format_datetime(input_datetime_str) -> str:
     return formatted_datetime
 
 
+def refactor_category(category):
+    if category == '🍟 Mак':
+        return 'vit'
+    elif category == '🐔 KFC':
+        return 'kfc'
+    elif category == '🍔 БК':
+        return 'bk'
+    elif category == '🍕🥦🥞 Другое':
+        return 'other'
+    else:
+        raise ValueError("Недопустимая категория")
+
+
+def reverse_refactor_category(category):
+    if category == 'vit':
+        return '🍟 Mак'
+    elif category == 'kfc':
+        return '🐔 KFC'
+    elif category == 'bk':
+        return '🍔 БК'
+    elif category == 'other':
+        return '🍕🥦🥞 Другое'
+    else:
+        raise ValueError("Недопустимая категория")
+
+
+async def transactions_to_list(transactions) -> list:
+    new_transactions = []
+    for transaction in transactions:
+        new_transactions.append(
+            [transaction[0], reverse_refactor_category(transaction[2]), transaction[3],
+             format_datetime(transaction[4])])
+    new_transactions.reverse()
+    return new_transactions
+
+
 def is_number(value):
     try:
-        float(value)  # Попробуйте преобразовать в число
+        float(value)
         return True
     except ValueError:
         return False

@@ -1,8 +1,8 @@
 from aiogram import types
 from aiogram.utils.keyboard import InlineKeyboardMarkup, InlineKeyboardButton
 
-from db_methods import get_user_data, get_transactions, transactions_to_list, get_transaction_by_id
-from methods import transaction_to_inline
+from db_methods import get_user_data, get_transactions, get_transaction_by_id
+from methods import transaction_to_inline, transactions_to_list
 
 
 async def get_transactions_kb(user_id: int):

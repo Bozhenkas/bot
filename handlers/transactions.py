@@ -1,6 +1,4 @@
-from aiogram import Router, F, types, Bot
-from aiogram.utils.keyboard import InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.fsm.context import FSMContext
+from aiogram import Router, F, types
 from aiogram.fsm.state import StatesGroup, State
 
 from keyboards.for_choice import get_choice_kb
@@ -9,7 +7,6 @@ from handlers.txt import menu_text, delete_text, edit_text, success_delete_text,
     transactions_text_1, transactions_text_2
 
 from db_methods import delete_transaction_by_id, get_transaction_by_id, get_user_data
-from methods import transaction_to_inline
 
 router = Router()
 
