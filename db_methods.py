@@ -118,11 +118,20 @@ async def delete_transaction_by_id(transaction_id: int) -> bool:
         # Создание курсора
         async with db.cursor() as cursor:
             # Шаг 1: Находим транзакцию по id
-            await cursor.execute("SELECT [tg id], category, summ FROM transactions WHERE id = ?", (transaction_id,))
+            await cursor.execute("SELECT [tg id], category, summ, date FROM transactions WHERE id = ?",
+                                 (transaction_id,))
             transaction_data = await cursor.fetchone()
 
             if transaction_data:
-                tg_id, category, summ = transaction_data
+                tg_id, category, summ, date = transaction_data
+
+                delete_date = datetime.datetime.now(pytz.timezone('Europe/Moscow')).strftime(
+                    "%Y-%m-%d %H:%M:%S %Z")[:-4]
+                await cursor.execute(
+                    "INSERT INTO deleted_transactions ([tg id], category, summ, date, delete_date) "
+                    "VALUES (?, ?, ?, ?, ?)",
+                    (tg_id, category, summ, date, delete_date)
+                )
 
                 # Шаг 2: Вычитаем сумму из категории пользователя
                 await cursor.execute(f"UPDATE users SET {category} = {category} - ? WHERE tg_id = ?", (summ, tg_id,))
