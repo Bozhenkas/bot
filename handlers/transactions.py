@@ -68,6 +68,7 @@ async def go_back(callback: types.CallbackQuery):
 async def go_back(callback: types.CallbackQuery):
     await callback.message.answer(menu_text, reply_markup=get_choice_kb())
     await callback.message.delete()
+    await callback.answer()
 
 
 @router.callback_query(F.data.startswith('back17'))

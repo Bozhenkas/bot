@@ -1,4 +1,4 @@
-from aiogram import Router, F, types
+from aiogram import Router, types
 from aiogram.filters.command import Command
 
 from db_methods import add_to_db

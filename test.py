@@ -1,6 +1,6 @@
 import aiosqlite
 
-from db_methods import get_transactions, reverse_refactor_category, transactions_to_list, get_transaction_by_id
+from db_methods import get_transactions, reverse_refactor_category, get_transaction_by_id
 
 
 async def main():
